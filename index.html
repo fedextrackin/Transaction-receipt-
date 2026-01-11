@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comerica Bank Payment Confirmation</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&family=Source+Sans+Pro:wght@300;400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: linear-gradient(135deg, #e6f0ff 0%, #f5f9ff 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+        }
+        
+        .receipt-container {
+            width: 540px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 
+                0 15px 50px rgba(0, 74, 168, 0.15),
+                0 5px 15px rgba(0, 0, 0, 0.08),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* Comerica Bank Header */
+        .bank-header {
+            background: linear-gradient(135deg, #004AA8 0%, #00337A 100%);
+            padding: 28px 35px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .bank-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+        }
+        
+        .bank-header::after {
+            content: '';
+            position: absolute;
+            bottom: -30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 50%;
+        }
+        
+        .comerica-logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .comerica-logo-text {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-weight: 700;
+            font-size: 28px;
+            letter-spacing: -0.5px;
+        }
+        
+        .bank-tag {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-left: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .receipt-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            letter-spacing: 0.3px;
+        }
+        
+        .receipt-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+        
+        /* Security Strip */
+        .security-strip {
+            background: repeating-linear-gradient(
+                45deg,
+                #FFD100,
+                #FFD100 10px,
+                #004AA8 10px,
+                #004AA8 20px
+            );
+            height: 6px;
+            position: relative;
+        }
+        
+        /* Main Content */
+        .receipt-content {
+            padding: 40px 35px;
+            position: relative;
+        }
+        
+        /* Transaction Status */
+        .transaction-status {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+            padding: 20px 25px;
+            border-radius: 12px;
+            margin-bottom: 35px;
+            border-left: 6px solid #2E7D32;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.1);
+        }
+        
+        .status-icon {
+            width: 28px;
+            height: 28px;
+            background: #2E7D32;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 18px;
+            flex-shrink: 0;
+        }
+        
+        .status-icon i {
+            color: white;
+            font-size: 14px;
+        }
+        
+        .status-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1B5E20;
+        }
+        
+        .status-subtext {
+            font-size: 14px;
+            color: #2E7D32;
+            margin-top: 3px;
+        }
+        
+        /* Transaction Details Grid */
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 35px;
+        }
+        
+        .detail-card {
+            background: #F8FAFF;
+            padding: 22px;
+            border-radius: 12px;
+            border: 1px solid #E3ECFF;
+            transition: all 0.3s ease;
+        }
+        
+        .detail-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 74, 168, 0.08);
+            border-color: #C5D8FF;
+        }
+        
+        .detail-label {
+            font-size: 13px;
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+        
+        .detail-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #00337A;
+            line-height: 1.4;
+        }
+        
+        .detail-value.amount {
+            color: #D32F2F;
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        
+        .detail-value.transaction-id {
+            font-family: 'Courier New', monospace;
+            color: #004AA8;
+            background: linear-gradient(135deg, #E8F0FF 0%, #F0F5FF 100%);
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 15px;
+            letter-spacing: 0.8px;
+            border: 1px solid #D1DEFF;
+        }
+        
+        /* Payment Description */
+        .payment-description {
+            background: linear-gradient(135deg, #FFF3E0 0%, #FFECB3 100%);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 30px 0;
+            border-left: 6px solid #FF9800;
+        }
+        
+        .description-title {
+            font-size: 15px;
+            color: #E65100;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .description-title i {
+            margin-right: 10px;
+        }
+        
+        .description-text {
+            font-size: 15px;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        /* FedEx Section */
+        .fedex-section {
+            background: linear-gradient(135deg, #F5F0FF 0%, #ECE6FF 100%);
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 30px;
+            border: 1px solid #E1D9FF;
+        }
+        
+        .fedex-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .fedex-logo {
+            display: flex;
+            margin-right: 20px;
+        }
+        
+        .fedex-logo .fed {
+            background: #4D148C;
+            padding: 6px 10px;
+            font-weight: 900;
+            font-size: 18px;
+            color: white;
+        }
+        
+        .fedex-logo .ex {
+            background: #FF6200;
+            padding: 6px 10px;
+            font-weight: 900;
+            font-size: 18px;
+            color: white;
+        }
+        
+        .fedex-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #4D148C;
+        }
+        
+        .tracking-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #E1D9FF;
+        }
+        
+        .tracking-label {
+            font-size: 13px;
+            color: #666;
+            font-weight: 600;
+        }
+        
+        .tracking-number {
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            font-weight: 700;
+            color: #4D148C;
+            letter-spacing: 1px;
+        }
+        
+        /* Bank Security Footer */
+        .bank-footer {
+            padding: 30px 35px;
+            background: #F5F9FF;
+            border-top: 1px solid #E3ECFF;
+        }
+        
+        .security-features {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 25px;
+        }
+        
+        .security-feature {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .security-icon {
+            color: #004AA8;
+            margin-right: 8px;
+            font-size: 14px;
+        }
+        
+        .disclaimer {
+            text-align: center;
+            font-size: 11px;
+            color: #888;
+            line-height: 1.6;
+            padding-top: 20px;
+            border-top: 1px solid #E3ECFF;
+        }
+        
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #004AA8;
+        }
+        
+        /* Watermarks and Security Elements */
+        .bank-watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            font-size: 120px;
+            font-weight: 900;
+            color: rgba(0, 74, 168, 0.03);
+            pointer-events: none;
+            white-space: nowrap;
+            z-index: 0;
+        }
+        
+        .microprint {
+            position: absolute;
+            bottom: 20px;
+            right: 35px;
+            font-size: 6px;
+            color: #CCC;
+            letter-spacing: 0.5px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .receipt-container {
+                width: 95%;
+                border-radius: 15px;
+            }
+            
+            .details-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .security-features {
+                flex-direction: column;
+                gap: 15px;
+                align-items: center;
+            }
+            
+            .contact-info {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+            
+            .bank-watermark {
+                font-size: 80px;
+            }
+        }
+        
+        /* Print styles */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .receipt-container {
+                box-shadow: none;
+                width: 100%;
+                border-radius: 0;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="receipt-container">
+        <!-- Comerica Bank Watermark -->
+        <div class="bank-watermark">COMERICA BANK</div>
+        
+        <!-- Bank Header -->
+        <div class="bank-header">
+            <div class="comerica-logo">
+                <div class="comerica-logo-text">Comerica</div>
+                <div class="bank-tag">Online Banking</div>
+            </div>
+            <div class="receipt-title">ELECTRONIC PAYMENT CONFIRMATION</div>
+            <div class="receipt-subtitle">Official Transaction Receipt • This is not a bill</div>
+        </div>
+        
+        <!-- Security Strip -->
+        <div class="security-strip"></div>
+        
+        <!-- Main Content -->
+        <div class="receipt-content">
+            <!-- Transaction Status -->
+            <div class="transaction-status">
+                <div class="status-icon">
+                    <i class="fas fa-check"></i>
+                </div>
+                <div>
+                    <div class="status-text">TRANSACTION COMPLETED SUCCESSFULLY</div>
+                    <div class="status-subtext">Funds have been transferred to the merchant</div>
+                </div>
+            </div>
+            
+            <!-- Transaction Details Grid -->
+            <div class="details-grid">
+                <div class="detail-card">
+                    <div class="detail-label">Transaction ID</div>
+                    <div class="detail-value transaction-id">CMB-9264-8832-5571-2026</div>
+                </div>
+                
+                <div class="detail-card">
+                    <div class="detail-label">Date & Time</div>
+                    <div class="detail-value">January 11, 2026 • 5:15:32 PM EST</div>
+                </div>
+                
+                <div class="detail-card">
+                    <div class="detail-label">Account Holder</div>
+                    <div class="detail-value">Deborah L. Stoff</div>
+                </div>
+                
+                <div class="detail-card">
+                    <div class="detail-label">From Account</div>
+                    <div class="detail-value">•••• 4832 (Comerica Checking)</div>
+                </div>
+                
+                <div class="detail-card">
+                    <div class="detail-label">Payment Method</div>
+                    <div class="detail-value">Online Bill Pay</div>
+                </div>
+                
+                <div class="detail-card">
+                    <div class="detail-label">Merchant</div>
+                    <div class="detail-value">FedEx Express International</div>
+                </div>
+                
+                <div class="detail-card">
+                    <div class="detail-label">Authorization Code</div>
+                    <div class="detail-value">CM9T4R7F2</div>
+                </div>
+                
+                <div class="detail-card">
+                    <div class="detail-label">Reference Number</div>
+                    <div class="detail-value">CMB-011126-172332</div>
+                </div>
+            </div>
+            
+            <!-- Amount Card -->
+            <div class="detail-card" style="grid-column: span 2; text-align: center;">
+                <div class="detail-label">Transaction Amount</div>
+                <div class="detail-value amount">$100.00 USD</div>
+                <div style="font-size: 14px; color: #666; margin-top: 10px;">
+                    Available Balance: $4,283.76 • Pending Transactions: $100.00
+                </div>
+            </div>
+            
+            <!-- Payment Description -->
+            <div class="payment-description">
+                <div class="description-title">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    PAYMENT DESCRIPTION
+                </div>
+                <div class="description-text">
+                    <strong>Partial payment</strong> for customs clearance processing fee through FedEx Express. 
+                    This $100.00 payment covers a portion of the total $195.00 government-imposed VAT and tax charges 
+                    for international shipment 7946 3210 5843. Balance of $95.00 remains due for complete customs clearance.
+                </div>
+            </div>
+            
+            <!-- FedEx Section -->
+            <div class="fedex-section">
+                <div class="fedex-header">
+                    <div class="fedex-logo">
+                        <div class="fed">Fed</div>
+                        <div class="ex">Ex</div>
+                    </div>
+                    <div class="fedex-title">FedEx Express Customs Clearance</div>
+                </div>
+                
+                <div class="tracking-info">
+                    <div class="tracking-label">SHIPMENT TRACKING NUMBER</div>
+                    <div class="tracking-number">7946 3210 5843</div>
+                </div>
+                
+                <div style="font-size: 13px; color: #666; margin-top: 15px; padding: 12px; background: white; border-radius: 6px;">
+                    <i class="fas fa-info-circle" style="color: #4D148C; margin-right: 8px;"></i>
+                    This payment has been forwarded to FedEx for processing with U.S. Customs & Border Protection.
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bank Footer -->
+        <div class="bank-footer">
+            <div class="security-features">
+                <div class="security-feature">
+                    <i class="fas fa-shield-alt security-icon"></i>
+                    <span>256-bit SSL Encryption</span>
+                </div>
+                <div class="security-feature">
+                    <i class="fas fa-lock security-icon"></i>
+                    <span>FDIC Insured • #26314</span>
+                </div>
+                <div class="security-feature">
+                    <i class="fas fa-user-shield security-icon"></i>
+                    <span>Comerica SafePass® Protected</span>
+                </div>
+            </div>
+            
+            <div class="disclaimer">
+                This is an official Comerica Bank transaction receipt. Please retain for your records.
+                <br>
+                Transaction processed through Comerica Bank's Online Bill Pay service. If you did not authorize this transaction,
+                contact Comerica Bank immediately at 1-800-248-4636.
+                <br>
+                <br>
+                Receipt generated electronically on: January 11, 2026 5:16:04 PM EST
+                <br>
+                Confirmation email sent to: d.stoff@email.com • Receipt ID: CMB-RCPT-2026-0111-883245
+            </div>
+            
+            <div class="contact-info">
+                <div><i class="fas fa-phone"></i> 1-800-248-4636</div>
+                <div><i class="fas fa-globe"></i> comerica.com</div>
+                <div><i class="fas fa-map-marker-alt"></i> Comerica Bank, N.A. • Member FDIC</div>
+            </div>
+        </div>
+        
+        <!-- Microprint Security -->
+        <div class="microprint">
+            CMB-RCPT-2026-0111-883245-2834765-1A-9T4R7F2-926488325571-2026-DEBORAH-ALICE-STOFF-794632105843-FEDEX-EXPRESS
+        </div>
+    </div>
+
+    <script>
+        // Add interactivity for a realistic experience
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add subtle animation to receipt
+            const receipt = document.querySelector('.receipt-container');
+            receipt.style.opacity = '0';
+            receipt.style.transform = 'translateY(30px) scale(0.98)';
+            
+            setTimeout(() => {
+                receipt.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                receipt.style.opacity = '1';
+                receipt.style.transform = 'translateY(0) scale(1)';
+            }, 100);
+            
+            // Add hover effect to amount
+            const amountElement = document.querySelector('.detail-value.amount');
+            amountElement.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.05)';
+                this.style.transition = 'transform 0.3s ease';
+            });
+            
+            amountElement.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+            });
+            
+            // Add print functionality
+            const printBtn = document.createElement('button');
+            printBtn.innerHTML = '<i class="fas fa-print"></i> PRINT RECEIPT';
+            printBtn.style.cssText = `
+                position: fixed;
+                bottom: 25px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: linear-gradient(135deg, #004AA8 0%, #00337A 100%);
+                color: white;
+                border: none;
+                padding: 14px 32px;
+                border-radius: 30px;
+                font-weight: 700;
+                font-size: 14px;
+                cursor: pointer;
+                box-shadow: 0 8px 25px rgba(0, 74, 168, 0.3);
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                z-index: 1000;
+                transition: all 0.3s ease;
+                letter-spacing: 0.5px;
+            `;
+            
+            printBtn.onmouseover = function() {
+                this.style.transform = 'translateX(-50%) translateY(-3px)';
+                this.style.boxShadow = '0 12px 30px rgba(0, 74, 168, 0.4)';
+            };
+            
+            printBtn.onmouseout = function() {
+                this.style.transform = 'translateX(-50%) translateY(0)';
+                this.style.boxShadow = '0 8px 25px rgba(0, 74, 168, 0.3)';
+            };
+            
+            printBtn.onclick = function() {
+                window.print();
+            };
+            
+            document.body.appendChild(printBtn);
+            
+            // Add a "Save as PNG" button (conceptual)
+            const saveBtn = document.createElement('button');
+            saveBtn.innerHTML = '<i class="fas fa-camera"></i> SAVE RECEIPT';
+            saveBtn.style.cssText = `
+                position: fixed;
+                bottom: 25px;
+                right: 25px;
+                background: linear-gradient(135deg, #4D148C 0%, #3D0F6B 100%);
+                color: white;
+                border: none;
+                padding: 14px 28px;
+                border-radius: 30px;
+                font-weight: 700;
+                font-size: 14px;
+                cursor: pointer;
+                box-shadow: 0 8px 25px rgba(77, 20, 140, 0.3);
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                z-index: 1000;
+                transition: all 0.3s ease;
+                letter-spacing: 0.5px;
+            `;
+            
+            saveBtn.onmouseover = function() {
+                this.style.transform = 'translateY(-3px)';
+                this.style.boxShadow = '0 12px 30px rgba(77, 20, 140, 0.4)';
+            };
+            
+            saveBtn.onmouseout = function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 8px 25px rgba(77, 20, 140, 0.3)';
+            };
+            
+            saveBtn.onclick = function() {
+                alert('To save as PNG: Take a screenshot or use a browser extension. For best results, use the print function and save as PDF.');
+            };
+            
+            document.body.appendChild(saveBtn);
+            
+            // Add date/time update for realism
+            const now = new Date();
+            const options = { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                timeZoneName: 'short'
+            };
+            
+            console.log('Receipt generated for Comerica Bank transaction');
+            console.log('Transaction: FX-9264-8832-5571');
+            console.log('Status: COMPLETED');
+            console.log('Merchant: FedEx Express International');
+        });
+    </script>
+</body>
+</html>
